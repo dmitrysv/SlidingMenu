@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -991,6 +992,13 @@ public class SlidingMenu extends RelativeLayout {
 		int rightPadding = insets.right;
 		int topPadding = insets.top;
 		int bottomPadding = insets.bottom;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Resources resources = getContent().getResources();
+			int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+			if (resourceId > 0) {
+				bottomPadding += resources.getDimensionPixelSize(resourceId);
+			}
+		}
 		if (!mActionbarOverlay) {
 			Log.v(TAG, "setting padding!");
 			setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
