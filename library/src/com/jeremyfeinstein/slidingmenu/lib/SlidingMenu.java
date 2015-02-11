@@ -20,11 +20,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Display;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -988,23 +984,57 @@ public class SlidingMenu extends RelativeLayout {
 	@SuppressLint("NewApi")
 	@Override
 	protected boolean fitSystemWindows(Rect insets) {
-		int leftPadding = insets.left;
-		int rightPadding = insets.right;
-		int topPadding = insets.top;
-		int bottomPadding = insets.bottom;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Resources resources = getContent().getResources();
-			int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-			if (resourceId > 0) {
-				bottomPadding += resources.getDimensionPixelSize(resourceId);
-			}
-		}
-		if (!mActionbarOverlay) {
-			Log.v(TAG, "setting padding!");
-			setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
-		}
-		return true;
+        if (mActionbarOverlay) return true;
+
+        setMyPadding(insets);
+        return true;
 	}
+
+    /*
+    fixed bug when used in lollipop
+     */
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        if (mActionbarOverlay) return insets.consumeSystemWindowInsets();
+
+        Rect rect = new Rect(
+                insets.getSystemWindowInsetLeft(),
+                insets.getSystemWindowInsetTop(),
+                insets.getSystemWindowInsetRight(),
+                insets.getSystemWindowInsetBottom()
+        );
+
+        setMyPadding(rect);
+
+        return insets.consumeSystemWindowInsets();
+    }
+
+    private void setMyPadding(Rect rect) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Display display = getDisplay();
+
+            Point realSize = new Point();
+            display.getRealSize(realSize);
+
+            Rect rectSize = new Rect();
+            display.getRectSize(rectSize);
+
+            rect.left += rectSize.left;
+            rect.top += rectSize.top;
+            rect.right += realSize.x - rectSize.right;
+            rect.bottom += realSize.y - rectSize.bottom;
+        }
+
+        setPadding(
+                rect.left, rect.top, rect.right, rect.bottom
+        );
+    }
+
+    /*
+    end bug fix
+     */
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void manageLayers(float percentOpen) {
