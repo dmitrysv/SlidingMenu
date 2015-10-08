@@ -19,7 +19,7 @@ buildscript {
 }
 
 allprojects {
-    group = 'com.jeremyfeinstein.slidingmenu.lib'
+    group = 'com.jeremyfeinstein.slidingmenu'
     version = "${currentVersionMajor}.${currentVersionMinor}.${currentVersionBuild}"
 
     repositories {
