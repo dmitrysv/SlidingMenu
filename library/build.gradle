@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 dependencies {
     compile 'com.android.support:support-v4:23.0.1'
     compile 'com.actionbarsherlock:actionbarsherlock:5.0.0@aar'
-    //5.0.0 - наша кастомная версия библиотеки адоптированная к АПИ 23 https://github.com/rogovalex/ActionBarSherlock/tree/my
+    //5.0.0 - custom version of library, which supports api 23 build https://github.com/rogovalex/ActionBarSherlock/tree/my
 }
 
 android {
